@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All MCQ Respiratory and ICU</title>
+    <style>
+        /* Medical Theme Palette */
+        :root {
+            --primary-blue: #005C97;     
+            --secondary-blue: #3385C6;   
+            --bg-color: #f0f4f8;         
+            --container-bg: #ffffff;
+            --accent-orange: #ff9f1c;    
+            --hover-orange: #f3910c;
+            --correct-green: #27ae60;
+            --wrong-red: #e74c3c;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color); 
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 80px; 
+        }
+
+        /* Top Header Title */
+        .top-header {
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary-blue);
+            letter-spacing: 1px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-orange);
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            width: 100%;
+            max-width: 750px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 92, 151, 0.15);
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            font-size: 26px;
+            margin-bottom: 25px;
+            font-weight: 900;
+        }
+
+        /* Instructions Box */
+        .instructions-box {
+            background-color: #fcfdfe;
+            border: 2px solid var(--secondary-blue);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            text-align: right;
+            direction: rtl;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .instructions-box h3 {
+            margin-top: 0;
+            color: var(--primary-blue);
+            font-size: 18px;
+            border-bottom: 1px solid #e1e8ed;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .instructions-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+
+        /* Grid Layouts */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* Buttons */
+        .btn-large {
+            display: block;
+            width: 100%;
+            padding: 16px 10px;
+            margin-bottom: 12px;
+            background-color: var(--secondary-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(51, 133, 198, 0.3);
+            transition: all 0.2s ease;
+        }
+        .btn-large:hover { background-color: var(--primary-blue); transform: translateY(-2px); }
+        .btn-large:active { transform: scale(0.98); }
+
+        .btn-orange { background-color: var(--accent-orange); box-shadow: 0 4px 10px rgba(255, 159, 28, 0.3); }
+        .btn-orange:hover { background-color: var(--hover-orange); }
+        
+        .btn-back { background-color: #95a5a6; box-shadow: none; margin-top: 20px;}
+        .btn-back:hover { background-color: #7f8c8d; }
+
+        .btn-exit {
+            background-color: #ecf0f1;
+            color: var(--wrong-red);
+            border: 2px solid var(--wrong-red);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .btn-exit:hover { background-color: var(--wrong-red); color: white; }
+
+        /* Screens Management */
+        .screen { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .screen.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Quiz UI */
+        .progress-container {
+            width: 100%;
+            background-color: #e1e8ed;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--correct-green);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e1e8ed;
+            padding-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 19px;
+            font-weight: 900;
+            margin-bottom: 25px;
+            text-align: left;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+
+        .option-btn {
+            padding: 14px;
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+            text-align: left;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .option-btn:hover:not(:disabled) { background-color: #eaf2f8; border-color: var(--secondary-blue); }
+
+        .correct { background-color: var(--correct-green) !important; color: white !important; border-color: #219653 !important; }
+        .wrong { background-color: var(--wrong-red) !important; color: white !important; border-color: #c0392b !important; }
+
+        /* Simulated Mode Styles */
+        .sim-question-block {
+            background: #ffffff;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+        }
+
+        /* Feedback Message */
+        .feedback-msg {
+            display: none;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            animation: fadeIn 0.3s;
+        }
+        .msg-correct { background-color: rgba(46, 204, 113, 0.15); color: #27ae60; }
+        .msg-wrong { background-color: rgba(231, 76, 60, 0.1); color: var(--wrong-red); }
+
+        .quiz-nav-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        #next-btn, #prev-btn { display: none; margin-bottom: 0; padding: 15px;}
+        #prev-btn { background-color: #95a5a6; }
+
+        /* Result & Review UI */
+        .score-display { font-size: 50px; font-weight: 900; color: var(--accent-orange); margin: 15px 0; }
+        .custom-arabic-msg { font-size: 22px; font-weight: bold; color: var(--primary-blue); margin-bottom: 10px; direction: rtl; }
+        .time-stat { font-size: 18px; font-weight: bold; color: var(--text-dark); margin-bottom: 25px; }
+        
+        .stats { font-size: 18px; margin-bottom: 30px; background: #f8f9fa; padding: 20px; border-radius: 12px; display:flex; justify-content:space-around;}
+        .stats span { font-weight: bold; }
+        .stat-correct { color: var(--correct-green); }
+        .stat-wrong { color: var(--wrong-red); }
+
+        .review-list { text-align: left; max-height: 400px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
+        .review-item { background: #ffffff; border-left: 5px solid var(--wrong-red); padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .review-q { font-weight: bold; margin-bottom: 12px; color: var(--text-dark); }
+        .review-wrong { color: var(--wrong-red); margin-bottom: 6px; font-size: 14px; font-weight:bold;}
+        .review-correct { color: var(--correct-green); font-size: 14px; font-weight: bold; }
+
+        /* Fixed Footer Quote */
+        .footer-quote {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 13px;
+            font-style: italic;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            display: block; 
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-header">Pediatric Questions 🩺</div>
+
+<div class="container">
+    
+    <div id="screen-home" class="screen active">
+        <div class="instructions-box">
+            <h3>ℹ️ التعليمات:</h3>
+            <ul>
+                <li>1️⃣ <strong>المادة:</strong> اختار القسم اللي هتمتحن فيه.</li>
+                <li>2️⃣ <strong>الشابتر:</strong> حدد موضوع معين أو امتحان شامل.</li>
+                <li>3️⃣ <strong>الترتيب:</strong> بالترتيب أو عشوائي أو محاكي كامل للامتحان.</li>
+                <li>4️⃣ <strong>النتيجة:</strong> شوف سكورك ووقتك في الآخر، وراجع أخطائك.</li>
+            </ul>
+        </div>
+        
+        <button class="btn-large btn-blue" style="padding: 20px; font-size: 20px;" onclick="showScreen('screen-chapters')">
+            📖 SELECT CHAPTER
+        </button>
+    </div>
+
+    <div id="screen-chapters" class="screen">
+        <h1>📖 SELECT CHAPTER</h1>
+        <div class="grid-layout" id="chapters-container">
+            </div>
+        <button class="btn-large btn-back" onclick="showScreen('screen-home')">
+            ⬅️ Back
+        </button>
+    </div>
+
+    <div id="screen-setup" class="screen">
+        <h1>⚙️ SETUP MODE</h1>
+        
+        <button class="btn-large btn-blue" onclick="startExam('sequential')">
+            🔢 SEQUENTIAL ORDER
+        </button>
+        
+        <button class="btn-large btn-blue" onclick="startExam('random')">
+            🔀 RANDOM ORDER
+        </button>
+
+        <button class="btn-large btn-orange" onclick="startExam('simulated')">
+            🎖️ SIMULATED EXAM
+            <span style="display:block; font-size:13px; font-weight:normal; margin-top:5px;">(Fast & Comprehensive)</span>
+        </button>
+
+        <button class="btn-large btn-back" onclick="showScreen('screen-chapters')">
+            ⬅️ Back
+        </button>
+    </div>
+
+    <div id="screen-quiz" class="screen">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="header-info">
+            <span id="question-tracker">Q 1/25</span>
+            <span id="timer">⏱️ 00:00</span>
+            <button class="btn-exit" onclick="exitQuiz()">🚪 Exit</button>
+        </div>
+
+        <div id="standard-quiz-ui">
+            <div class="question-text" id="question-text"></div>
+            <div class="options-container" id="options-container"></div>
+            <div id="feedback-msg" class="feedback-msg"></div>
+            <div class="quiz-nav-buttons">
+                <button class="btn-large" id="prev-btn" onclick="prevQuestion()">⬅️ Back</button>
+                <button class="btn-large btn-orange" id="next-btn" onclick="nextQuestion()">Next ➡️</button>
+            </div>
+        </div>
+
+        <div id="simulated-quiz-ui" style="display: none; text-align: left;"></div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <h1>🏆 EXAM COMPLETED</h1>
+        <div class="score-display" id="final-score">80%</div>
+        <div class="custom-arabic-msg" id="custom-arabic-msg"></div>
+        <div class="time-stat" id="final-time">⏱️ Time Taken: 00:00</div>
+        
+        <div class="stats">
+            <span class="stat-correct" id="stat-correct">✔️ Correct: 0</span>
+            <span class="stat-wrong" id="stat-wrong">❌ Wrong: 0</span>
+        </div>
+        
+        <button class="btn-large btn-blue" id="btn-review" onclick="showReview()">
+            🔍 REVIEW MISTAKES
+        </button>
+        <button class="btn-large correct" id="btn-again" onclick="restartExam()" style="display:none; background-color: var(--correct-green);">
+            🔁 AGAIN
+        </button>
+        <button class="btn-large btn-back" onclick="goHome()">
+            🏠 HOME PAGE
+        </button>
+    </div>
+
+    <div id="screen-review" class="screen">
+        <h1>🔍 REVIEW MISTAKES</h1>
+        <div class="review-list" id="review-list"></div>
+        <button class="btn-large btn-back" onclick="showScreen('screen-result')">
+            ⬅️ Back
+        </button>
+        <button class="btn-large btn-blue" onclick="goHome()">
+            🏠 HOME PAGE
+        </button>
+    </div>
+
+</div>
+
+<div class="footer-quote" id="main-footer-quote">
+    "The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom."
+</div>
+
+<script>
+    // ==========================================
+    // COMPLETE PEDIATRIC DATABASE (111 QUESTIONS)
+    // ==========================================
+    const rawDB = [
+        // --- 1. Growth & Nutrition (12) ---
+        {c:"growth", q:"Ali can sit on small chair; walks up stairs with 1 hand held; makes tower of 4 cubes; and can name pictures. What is the expected age of Ali?", o:["12 months","15 months","18 months","24 months","30 months"], a:2},
+        {c:"growth", q:"Salem runs well, opens doors; climbs on furniture; makes tower of 7 cubes, puts 3 words together; handles spoon well; and helps to undress. What is the expected age of Salem?", o:["15 months","18 months","24 months","30 months","36 months"], a:2},
+        {c:"growth", q:"Which of the following age groups have the highest energy and nutrient requirements relative to body size?", o:["Infancy","Early childhood","School age","Early adolescent","Late adolescent"], a:0},
+        {c:"growth", q:"What is the MOST common micronutrient deficiency in the world?", o:["Iron","Magnesium","Selenium","Zinc","Copper"], a:0},
+        {c:"growth", q:"Which of the following micronutrients deficiency is associated with microcytic anemia?", o:["Chromium","Copper","Molybdenum","Selenium","Iodine"], a:1},
+        {c:"growth", q:"Which of the following infections is absolute contraindication in developed countries to breastfeeding?", o:["Hepatitis C infection","CMV infection","Hepatitis B infection","Hepatitis A","HIV infection"], a:4},
+        {c:"growth", q:"Which of the following is the recommended duration of using the milk formula after removing the aluminum foil or plastic wrap?", o:["1 wk","2 wk","3 wk","4 wk","5 wk"], a:3},
+        {c:"growth", q:"Which of the following food items has the highest vitamin D content?", o:["Fish liver oils","Red meat","Green vegetable","Soya milk","Chicken"], a:0},
+        {c:"growth", q:"Which of the following is the MOST common cause of hypervitaminosis D?", o:["Misuse of vitamin D supplements","Overfortification of milk","Contamination of table sugar","Use of vitamin D supplements as cooking oil","Over exposure to sunlight"], a:0},
+        {c:"growth", q:"What is the recommended daily upper limit for long-term vitamin D intake for infants?", o:["500 IU","1000 IU","1500 IU","2000 IU","2500 IU"], a:1},
+        {c:"growth", q:"A 11-year-old boy is at the 5th percentile for height. The BEST method for differentiating between constitutional delay and genetic SS is", o:["assaying growth hormone","assaying testosterone","comparing bone age with chronological age","measuring somatomedin-C","measuring thyroid function"], a:2},
+        {c:"growth", q:"You are evaluating a 6yo girl for SS. Her growth chart reveals a birth length at 60th percentile, and a current height below 5th percentile. Her growth velocity in the last 3 yrs has been <2cm/yr. Her weight is at the 90th percentile. and her intelligence appears normal. There are no dysmorphic features. Her BA is 3 yrs. What is the most likely dx?", o:["Congenital hypothyroidism","Crohn desease","GH deficiency","Spondilodysplasia","Turner"], a:2},
+
+        // --- 2. Breastfeeding (12) ---
+        {c:"breastfeeding", q:"All of the following is BENEFITS OF BREASTFEEDING TO MOTHER except", o:["This promotes mother and child bonding.","It does not prevent uterine bleeding in the mother after delivery.","This is a natural form of Family Planning.","This reduces the risks of breast and ovarian cancer in the mother.","This saves time and precious expenses."], a:1},
+        {c:"breastfeeding", q:"Which of the following regarding BENEFITS BREASTFEEDING FOR BABY is not correct", o:["This provides the best possible nutrition to the young child.","It reduces the incidence of coughs and colds, ear infections, bronchitis, pneumonia.","It protects the child from colic, asthma, eczema.","It is essential for the optimal physical, emotional and mental development.","It does not reduce the incidence of otitis media."], a:4},
+        {c:"breastfeeding", q:"All of the following is CONTRAINDICATION TO BREASTFEEDING except", o:["Active /untreated TB","Mom takes radioactive compound(for cancer)","Mom take illegal drug","HIV infection","acute bronchitis"], a:4},
+        {c:"breastfeeding", q:"All of the following is correct for Colostrum except", o:["Thick, yellowish milk secreted in the first several days","Alkaline","Amount - approximately 100 cc's / 24-hour","More rich in protein but less CHO or fat","low IGA"], a:4},
+        {c:"breastfeeding", q:"Which of the following is NOT true about breast feeding?", o:["Recommended food for infants both term and preterm","50% of energy from proteins","Contains immunological benefits","Promotes growth of lactobacillus in GI","Decreases incidence of allergic disorders"], a:1},
+        {c:"breastfeeding", q:"Breast feeding has been suggested to have a possible protective effect against all the following EXCEPT", o:["otitis media","urinary tract infections","septicemia","childhood cancer","skin infections"], a:4},
+        {c:"breastfeeding", q:"An absolute contraindication to breastfeeding is", o:["hepatitis c infection of the mother","alcohol intake","herpes simplex lesion of the lips","active pulmonary tuberculosis","maternal high-grade fever"], a:3},
+        {c:"breastfeeding", q:"Regarding breast engorgement; All the following are true EXCEPT", o:["usually happens in the first stage of lactogenesis","poor breast feeding technique can cause engorgement","breastfeeding immediately at signs of infant hunger will eventually prevent this","to reduce engorgement, breasts should be softened prior to infant feeding","between feedings, cold compresses applied"], a:0},
+        {c:"breastfeeding", q:"According to the World Health Organization, which of the following hospital-based nursery interventions is associated with increased newborn breast-feeding rates?", o:["Initiation of breast-feeding for all babies within the first hour after birth","Separation of babies and mothers from other siblings","Screening for galactosemia in the newborn period","A strict breast-feeding schedule of feeding every 3 hours","All of the above"], a:0},
+        {c:"breastfeeding", q:"A 10-day-old 3.02-kg full-term infant. He is breastfeeding. He was discharged at 2 days of age his weight was 2.85 kg. At 4 days of age, his weight reached 2.79 kg. He is now 3.03 kg today at his 10-day-old. All the following are signs of the adequacy of breast-feeding except :", o:["Regaining birth weight by 10 days of age","Loss of less than 10% of birth weight","Transition to mustard-colored stools by 5 days of age","Presence of several wet diapers per day","None of the above"], a:4},
+        {c:"breastfeeding", q:"A 3-day-old breast-feeding infant. The mother complains of breast tenderness. Both breasts are warm and throbbing. No fever, chills, or aches. What do you recommend to the mother?", o:["Miconazole or nystatin cream applied to the mother's nipples","A 10 day antibiotics to cover Staphylococcus aureus for a mastitis","Warm compresses to treat a plugged duct","Increase feedings to 10 to 12 times per day; hand expression and cold compresses","Discontinuation of breast-feeding"], a:3},
+        {c:"breastfeeding", q:"An exclusively breasted 2-monthold infant. The mother is a strict vegetarian and does not eat any animal products. What specific dietary supplementation would you recommend for the mother?", o:["Vitamin D.","Vitamin A.","Vitamin B 12.","Vitamin E.","No supplementation is necessary."], a:2},
+
+        // --- 3. PEM Malnutrition (7) ---
+        {c:"pem", q:"The outward sign of cell damage in malnutrition is", o:["repeated infections","wasting","edema","hepatomegaly","facial appearance"], a:2},
+        {c:"pem", q:"The recommended transition time from stabilization to rehabilitation phase in the treatment of malnutrition is", o:["1 day","3 days","5 days","7 days","10 days"], a:1},
+        {c:"pem", q:"The WHO recommendation for antibiotic cover in the stabilization phase of treating malnourished boy free of initial complications is to use", o:["oral amoxicillin","parenteral penicillin","oral second-generation cephalosporin","parenteral gentamicin","parenteral third generation cephalosporin"], a:0},
+        {c:"pem", q:"During treatment of malnutrition, the signal of entry to the rehabilitation phase is", o:["reduced edema","resolution of infection","disappearance of signs of micronutrient deficiency","constant blood sugar level","constant body temperature"], a:0},
+        {c:"pem", q:"In consideration of preventing infections in stabilization phase of malnutrition in unimmunized 10-month-old boy. Of the following, the vaccine that is recommended to be given is", o:["oral polio vaccine","acellular pertussis vaccine","measles vaccine","pneumococcal vaccine","H. influenza vaccine"], a:2},
+        {c:"pem", q:"The following vitamins and trace elements are recommended to be given during the stabilization phase of malnutrition EXCEPT", o:["iron","vitamin A","folic acid","zinc","multivitamins"], a:0},
+        {c:"pem", q:"The aim of the rehabilitation phase in the treatment of malnutrition is to", o:["repair cellular function","correct fluid and electrolyte imbalance","restore homeostasis","catch-up growth","prevent death from infection"], a:3},
+
+        // --- 4. Vitamins & Micronutrients (6) ---
+        {c:"vitamins", q:"All the following statements concerning iron requirement in children are true EXCEPT", o:["breast milk provides optimal intake of iron for the first 4 months","iron present in animal protein is more bioavailable than in vegetables","iron deficiency is the most common micronutrient deficiency","cow's milk is a good source of bioavailable iron","iron supplements can interfere with zinc absorption"], a:3},
+        {c:"vitamins", q:"The American academy of pediatrics change the vitamin D intake recommendation in 2010 to", o:["200 IU/day","400 IU/day","600 IU/day","800 IU/day","1000 IU/day"], a:2},
+        {c:"vitamins", q:"The MOST commonly used index for nutritional status is", o:["height-for-age","weight-for-height","body mass index","mid-upper arm circumference","weight-for-age"], a:4},
+        {c:"vitamins", q:"The dietary reference intake of pyridoxine for a healthy eight-month-old infant is", o:["0.1 mg/day","0.3 mg/day","0.5 mg/day","1.0 mg/day","3 mg/day"], a:1},
+        {c:"vitamins", q:"Effective supplementation of folate for prevention of neural tube defect is", o:["started at least 1 mo before conception, and continued through the first 2-3 mo of pregnancy","started at least 3 mo before conception, to be stopped after positive pregnancy test.","started after positive pregnancy test and continued through the first 2-3 mo of pregnancy.","started at least 1 mo before conception, to be stopped after positive pregnancy test.","started at least 3 mo before conception, and continued through the first 2-3 mo of pregnancy"], a:0},
+        {c:"vitamins", q:"The dietary reference intake (DRI) of folate for a healthy eight-month-old infant is", o:["80 microgm/day","150 microgm/day","200 microgm/day","300 microgm/day","400 microgm/day"], a:0},
+
+        // --- 5. Fevers (19) ---
+        {c:"fevers", q:"Which of the following drugs is well known to cause fever?", o:["Amoxicillin","Azithromycin","Amphotericin B","Cefixime","Teicoplanin"], a:2},
+        {c:"fevers", q:"Which of the following disorders is characterized by periodic fever?", o:["Cyclic neutropenia","Familial Mediterranean fever","TNF receptor-associated periodic syndrome","Hyper-IgD syndrome","Muckle-Wells syndrome"], a:0},
+        {c:"fevers", q:"Which of the following conditions is classically associated with double quotidian fever (fever that peaks twice in 24 hr)?", o:["Familial Mediterranean fever","Cyclic neutropenia","Behçet disease","Inflammatory arthritis","Crohn's disease"], a:3},
+        {c:"fevers", q:"Which of the following CSF parameters is not affected by prior antibiotic administration in bacterial meningitis?", o:["PCR","Culture","Cell","Glucose","Protein"], a:0},
+        {c:"fevers", q:"An 18-month-old girl develops prolonged fever of 3 weeks duration... recurrent spikes every 2-4 days. Of the following, the MOST likely diagnosis is", o:["nephrogenic diabetes insipidus","familial dysautonomia","pseudo-FUO","familial Mediterranean fever (FMF)","hyper IgD syndrome"], a:2},
+        {c:"fevers", q:"Which of the following conditions is accompanied by fever in the absence of sweating?", o:["Hodgkin lymphoma","Tuberculosis","Hyperthyroidism","Hypoglycemia","Familial dysautonomia"], a:4},
+        {c:"fevers", q:"A 12-year-old boy develops fever and severe oral mucositis; diagnosed with acute lymphoblastic leukemia 3 months ago; ANC is 100/mm3. MOST appropriate antibiotic is", o:["cefepime","vancomycin","piperacillin","ceftriaxone","amphotericin"], a:1},
+        {c:"fevers", q:"Which of the following is the MOST likely diagnosis in a 1-year-old male child with prolonged fever associated with bulbar conjunctivitis?", o:["Measles","Lymphogranuloma venereum","Kawasaki disease","Coxsackievirus infection","Tuberculosis"], a:2},
+        {c:"fevers", q:"A 3-year-old girl develops erythema, swelling and tenderness of the right hand. Swab culture reveals MRSA. The cephalosporin that is MOST effective against this pathogen is", o:["cefepime","ceftazidime","ceftaroline","cefazolin","cefuroxime"], a:2},
+        {c:"fevers", q:"Fever is defined as a rectal temperature of", o:["≥37.5°C","≥37.6°C","≥38°C","≥38.1°C","≥38.5°C"], a:2},
+        {c:"fevers", q:"Endogenous pyrogens include", o:["antigen–antibody complexes","complement components","lymphocyte products","interferons β and γ","androgenic steroid metabolites"], a:3},
+        {c:"fevers", q:"Drugs that are known to cause fever include", o:["chlorpheniramine","allopurinol","diphenhydramine","acetazolamide","adenosine"], a:1},
+        {c:"fevers", q:"Bulbar conjunctivitis in a child with FUO suggests", o:["leptospirosis","coxsackievirus infection","tuberculosis","infectious mononucleosis","lymphogranuloma venereum"], a:0},
+        {c:"fevers", q:"Which type of fever is persistent and varies by more than 0.5°c /day?", o:["intermittent","hectic","sustained","remittent","relapsing"], a:3},
+        {c:"fevers", q:"All the following are causes of very high temperatures (>41°C) EXCEPT", o:["malignant hyperthermia","malignant neuroleptic syndrome","infection","drug fever","heat stroke"], a:2},
+        {c:"fevers", q:"Penicillins are the drugs of choice for pediatric infections caused by the following EXCEPT", o:["group A Streptococcus","H .influenzae","Treponema pallidum","L. monocytogenes","N. meningitides"], a:1},
+        {c:"fevers", q:"Cefixime is a third-generation cephalosporin active against all the following EXCEPT", o:["Streptococci","Staphylococci","H. influenza","Neisseria gonorrhoeae","Proteus vulgaris"], a:1},
+        {c:"fevers", q:"Meropenem is a carbapenem antibiotic with broad-spectrum activity but has no activity against", o:["P. aeruginosa","S. maltophilia","L. monocytogenes","S. aureus","N. meningitides"], a:1},
+        {c:"fevers", q:"Kawasaki disease closely resembles toxic shock syndrome clinically. However, features of TSS usually absent in Kawasaki disease like", o:["fever unresponsive to antibiotics","hyperemia of mucous membranes","erythematous rash","desquamation","diffuse myalgia"], a:4},
+
+        // --- 6. ENT (Otitis) (13) ---
+        {c:"ent", q:"What is the MOST common cause of otalgia in children?", o:["Foreign body in the auditory canal","Trauma","Otitis externa","Acute otitis media","Mastoiditis"], a:3},
+        {c:"ent", q:"What is the MOST common cause of conductive hearing loss in children?", o:["Tympanic membrane perforation","Middle ear effusion","Impacted cerumen","Foreign body in the auditory canal","Cholesteatoma"], a:1},
+        {c:"ent", q:"Which of the following differentiate between otitis externa and otitis media in children?", o:["Otitis externa is more common","Fever is more prominent in otitis externa","Periauricular lymphadenitis is more common in otitis externa","Otoscopic examination of the TM should be normal in otitis externa","Hearing loss is more common in otitis externa"], a:2},
+        {c:"ent", q:"A 2-year-old toddler with severe earache, redness of right eye with greenish secretions. Right TM is erythematous and bulging. What is the most common causative agent?", o:["Streptococcus pneumoniae","Nontypable Haemophilus influenzae","Moraxella catarrhalis","Chlamydia trachomatis","Staphylococcus aureus"], a:1},
+        {c:"ent", q:"What is the most specific tympanic membrane finding in acute otitis media?", o:["Erythema","Bulging","Opacification","Perforation","Immobility"], a:1},
+        {c:"ent", q:"A 10-years-old child presented with second attack of acute otitis media and received azithromycin orally as he had urticarial rash following amoxicillin. No improvement. MOST appropriate choice is", o:["trimethoprim-sulfamethoxazole","cefdinir","levofloxacin","ceftriaxone","clindamycin"], a:2},
+        {c:"ent", q:"What is the antibiotic of choice for acute otitis media (AOM), if β-lactamase producing pathogen is suspected?", o:["Ceftriaxone","Cefdinir","Amoxicillin-clavulanate","Levofloxacin","Clarithromycin"], a:2},
+        {c:"ent", q:"A 12-year-old boy presented with left sided otalgia, temporal headache, vomiting, vertigo, papilledema, red bulging TM, and retroauricular redness/swelling. MOST appropriate next step is", o:["change antibiotic to IV ceftriaxone and follow up","change antibiotic to IV ceftriaxone + vanco + US mastoid","change antibiotic to IV ceftriaxone + vanco + CT temporal bone","change antibiotic to IV ceftriaxone + vanco + contrast CT brain","change antibiotic to IV ceftriaxone + vanco + MRI brain"], a:3},
+        {c:"ent", q:"A 5-year-old boy develops otitis media due to pneumococcal infection. He has a history of non-type I allergic reaction to penicillin. BEST alternative treatment is", o:["cephalexin","clindamycin","levofloxacin","trimethoprim-sulphamethaxazole","azithromycin"], a:0},
+        {c:"ent", q:"Which of the following infections is mainly caused by Nontypable strains of H. influenzae rather than by H. influenzae type b?", o:["Meningitis","Pericarditis","Suppurative arthritis","Acute epiglottitis","Otitis media"], a:4},
+        {c:"ent", q:"An 8-year-old child presents with hearing loss in the left ear... area of yellow-brown crust superior to the malleus. What is the most likely cause of the hearing loss?", o:["Damage to the ossicles from his previous history of chronic otitis media with effusion","Impaired function of the tympanic membrane from the tympanosclerosis","Erosion of the ossicles by cholesteatoma in the superior portion of the tympanic membrane","Damage to the tympanic membrane from the previous myringotomy and PE tube","Ongoing Eustachian tube dysfunction resulting in abnormal middle ear pressure"], a:2},
+        {c:"ent", q:"What is the most important physical examination finding in diagnosing otitis media with effusion?", o:["Dull tympanic membrane","Absent light reflex","Decreased tympanic membrane mobility","Obscured ossicles","Air bubbles behind the tympanic membrane"], a:2},
+        {c:"ent", q:"A 1.5-year-old child with tympanostomy tubes... The report says that the tympanometry showed patent tubes bilaterally. Which tympanometry report corresponds with this conclusion?", o:["Type A (normal peak), normal volume","Type A (normal peak), large volume","Type B (flat, no peak), normal volume","Type C (retracted peak), normal volume","Type B (flat, no peak), large volume"], a:4},
+
+        // --- 7. Gastroenteritis (14) ---
+        {c:"gastro", q:"Which of the following should be avoided in the child with acute diarrhea?", o:["Yogurt","Wheat","Rice","Fruit juice","Potatoes"], a:3},
+        {c:"gastro", q:"Which of the following antiemetic medications is more suitable to be used in children?", o:["Prochlorperazine","Cyclizine","Metoclopramide","Domperidone","Ondansetron"], a:4},
+        {c:"gastro", q:"A 4-year-old child presents to emergency unit with seizure, high grade fever, and bloody diarrhea. What is the FIRST line antibiotics therapy?", o:["Ciprofloxacin","Cefixime","Trimethoprim-sulfamethoxazole","Metronidazole","Ampicillin"], a:0},
+        {c:"gastro", q:"Which of the following enteropathogens is infectious in small inoculums?", o:["Cholera","Shigella","Nontyphoidal Salmonella","Enterotoxigenic E. coli","Campylobacter"], a:1},
+        {c:"gastro", q:"What is the MOST common viral cause of acute gastroenteritis in children?", o:["Rotavirus","Norovirus","Sapovirus","Adenovirus","Astrovirus"], a:0},
+        {c:"gastro", q:"A 6-year-old boy presents with sudden onset of severe nausea and vomiting within 2 hours of ingestion of improperly refrigerated cooked rice. MOST causative pathogen is", o:["Salmonella","Shigella","Campylobacter","Bacillus cereus","Shiga toxin-producing E. coli"], a:3},
+        {c:"gastro", q:"Persistent diarrhea is defined when the diarrhea lasting more than", o:["2 wk","4 wk","6 wk","8 wk","12 wk"], a:0},
+        {c:"gastro", q:"The BEST solution for replacement of ongoing losses in a 3-year-old child presented with diarrhea and a limited ability to take oral fluid is", o:["Ringer lactate","normal saline + 10 mEq/L KCl","½ normal saline + 10 mEq/L KCl","NS + 30 mEq/L sodium bicarbonate + 20 mEq/L KCl","D5 ½ NS + 30 mEq/L sodium bicarbonate + 20 mEq/L KCl"], a:4},
+        {c:"gastro", q:"Which of the following is a feature of mild dehydration?", o:["Thirst","Tachycardia","Lethargy","Sunken fontanel","Decreased tears"], a:0},
+        {c:"gastro", q:"Which of the following is a clue to severe dehydration?", o:["Cold and mottled skin","Oliguria","Sunken eyes and fontanel","Dry mucous membranes","Irritability"], a:0},
+        {c:"gastro", q:"An 18-month-old child presents with history of vomiting, diarrhea... capillary refill of 2 sec, dry mucous membranes, and tachycardia. MOST likely percent of dehydration is", o:["<3%","3-6 %","7-9%","10–12%",">12%"], a:1},
+        {c:"gastro", q:"A 12-month-old infant presents with vomiting, diarrhea, no urine output. Depressed consciousness with capillary refill of 4 second very sunken eyes. BEST initial fluid therapy is", o:["0.9% NS","½ NS","¼ NS","0.2 NS","½ GS"], a:0},
+        {c:"gastro", q:"A 14-month-old bottle fed girl presents with vomiting and diarrhea. Doughy skin, capillary refill 3 sec; serum Na+ (160 mEq/L), K+ (4.1 mEq/L). BEST initial fluid therapy is", o:["Isotonic N S","½ N S","¼ N S","0.2 N S","Ringer lactate"], a:0},
+        {c:"gastro", q:"A 9-month-old girl presents with vomiting and diarrhea. Doughy skin, Na+ (168 mEq/L)... patient shows improvement on two shots of isotonic N S. NEXT step in management is", o:["oral rehydration solution","5% dextrose + ½ normal saline over 24 hr","5% dextrose + ½ normal saline over 48 hr","5% dextrose + ¼ normal saline over 24 hr","5% dextrose + ¼ normal saline over 48 hr"], a:2},
+
+        // --- 8. Respiratory (5) ---
+        {c:"resp", q:"A change in the color or consistency of the nasal secretions during the course of common cold illness may indicate", o:["sinusitis","bacterial superinfection","accumulation of polymorphonuclear cells","vasomotor rhinitis","allergic rhinitis"], a:2},
+        {c:"resp", q:"Which of the following is no more effective than placebo for the treatment of cold symptoms?", o:["Zinc","Pseudoephedrine","Phenylephrine","Vitamin C","Saline nose drops"], a:3},
+        {c:"resp", q:"Which of the following is a minor symptom of sinusitis?", o:["Purulent anterior nasal discharge","Nasal congestion or obstruction","Facial congestion or fullness","Hyposmia or anosmia","Dental pain"], a:4},
+        {c:"resp", q:"A 9-month-old infant... fever 38.9°C... able to feed normally. Mother has had a viral URI. The most appropriate action is to", o:["Give paracetamol drops and monitor at home","Give paracetamol , arrange for re-examination after 2 days","Admit to hospital urgently for investigations and antibiotic coverage","Ask for CBC and if normal, reassure mother that baby has viral infection","Give oral amoxicillin and monitor at home"], a:1},
+        {c:"resp", q:"A previously well 3-year-old child is presenting with a 2-day history of coryzal symptoms and a one-day history of productive cough. Which statement is correct", o:["The commonest cause of these symptoms is bacterial infection","The presence of cough following viral infection makes the diagnosis of asthma likely","The diagnosis is cold","The diagnosis is pneumonia","An expectorant will be helpful in ameliorating the condition"], a:2},
+
+        // --- 9. CNS Infections (Meningitis) (23) ---
+        {c:"cns", q:"A baby was diagnosed with neonatal Streptococcus meningitis 2 weeks ago. He completed a full course of therapy and presents to your clinic for follow-up. Which of the following is an important test to perform?", o:["Repeat CSF cultures","Ig levels","Hearing test","Brain MRI","Repeat blood cultures"], a:2},
+        {c:"cns", q:"A 2-year-old girl is hospitalized for a week with symptoms of altered mental status and headache. For the past 2 weeks, she has had an influenza-like illness... rodent infestation in the house. The most likely etiology is:", o:["West Nile virus","Lymphocytic choriomeningitis virus (LCMV)","Herpes simplex virus-1","Mumps virus","Western equine encephalitis virus"], a:1},
+        {c:"cns", q:"A 17-year-old healthy female presents to the ED with fever of 102°F, headache, photophobia, and stiff neck. HR 150, BP 88/55. WBC 18 with left shift. Best empiric antibiotic therapy is:", o:["Vancomycin and ceftriaxone","Ampicillin and gentamicin","Chloramphenicol","Vancomycin"], a:0},
+        {c:"cns", q:"A 17-year-old girl presents with a headache for 1 day... concern for viral meningitis. Which of the following statements is correct about acute viral meningitis?", o:["Pleconaril is effective, available antiviral therapy.","HSV causes over 90% of cases.","CSF profile often shows a monocytic predominance early in the infection.","It occurs in approximately 90% of mumps cases.","It does not generally lead to long-term neurologic-sequelae."], a:4},
+        {c:"cns", q:"A 6-year-old boy presents to the emergency room with fever and altered mental status. Somnolent, pupils dilated and slow to react to light. Optimal timing of when antibiotics should be started?", o:["After the CT scan is done","Without any delay","Once the lumbar puncture has been performed","When the lab calls with the STAT Gram stain results","After the hearing test"], a:1},
+        {c:"cns", q:"The cerebrospinal fluid (CSF) protein may reach 3,000 (mg/dL) in", o:["acute bacterial meningitis","tuberculous meningitis","fungal meningitis","amebic (naegleria) meningoencephalitis","subdural empyema"], a:1},
+        {c:"cns", q:"The organism causing CNS infection is never seen on direct examination of CSF in", o:["tuberculous meningitis","acute bacterial meningitis","partially treated bacterial meningitis","fungal meningitis","amebic (naegleria) meningoencephalitis"], a:0},
+        {c:"cns", q:"T-lymphocyte defects (congenital or acquired) are associated with an increased risk of infections of the CNS with", o:["Listeria monocytogenes","Streptococcus pneumoniae","Neisseria meningitidis","Haemophilus influenzae type b","coagulase-negative Staphylococci"], a:0},
+        {c:"cns", q:"The CSF leukocyte count in normal healthy neonates may reach", o:["10 leukocytes/mm3","15 leukocytes/mm3","20 leukocytes/mm3","25 leukocytes/mm3","30 leukocytes/mm3"], a:4},
+        {c:"cns", q:"The following is an alternative treatment for L. monocytogenes meningitis", o:["vancomycin","cefotaxime","chloramphenicol","intravenous trimethoprimsulfamethoxazole","meropenem"], a:3},
+        {c:"cns", q:"Reversible gallbladder pseudolithiasis, detectable by abdominal ultrasonography during treatment of bacterial meningitis is usually caused by", o:["ceftazidime","cefotaxime","ceftriaxone","meropenem","chloramphenicol"], a:2},
+        {c:"cns", q:"Data support the use of intravenous dexamethasone in the treatment of children older than 6 wk with acute bacterial meningitis caused by H. influenza type b for the following reasons EXCEPT", o:["shorter duration of fever","lower CSF protein","lower mortality","lower CSF lactate levels","reduction in sensorineural hearing loss"], a:2},
+        {c:"cns", q:"After immediate management of seizures during bacterial meningitis, patients should receive the following anticonvulsant to reduce the likelihood of recurrence", o:["valproic acid","phenytoin","phenobarbital","lorazepam","carbamazepine"], a:1},
+        {c:"cns", q:"The MOST common neurologic sequelae of bacterial meningitis is", o:["recurrent seizures","delay in acquisition of language","hearing loss","cognitive impairment","visual impairment"], a:2},
+        {c:"cns", q:"Which of the following cause an elevated polymorphonuclear WBC count in the CSF?", o:["Early phase of aseptic meningitis","Tuberculous meningitis","Fungal meningitis","Spinal cord tumor","Immunologic disorders"], a:0},
+        {c:"cns", q:"The CSF protein falls to the normal childhood range by", o:["1 mo of age","2 mo of age","3 mo of age","4 mo of age","5 mo of age"], a:2},
+        {c:"cns", q:"A 10-month-old boy presented with febrile seizure... his immunization status was unknown. A medical student asks you about lumbar puncture LP for this baby; your answer should be", o:["No need for LP at time being","LP should be done because his immunization status was unknown","LP should be done after brain ultrasound","LP should be done if he developed another seizure within 24 hour","LP should be done because he is a male gender"], a:1},
+        {c:"cns", q:"Which of the following viral diseases may cause low glucose in CSF?", o:["Herpes simplex virus","Arboviruses","Mumps","Adenoviruses","Rabies"], a:2},
+        {c:"cns", q:"Which of the following bacterial meningitis increased in children with cochlear implants?", o:["Staphylococcal bacterial meningitis","Anaerobic bacterial meningitis","Gram-negative enteric bacterial meningitis","Pneumococcal bacterial meningitis","Pseudomonas aeruginosa bacterial meningitis"], a:3},
+        {c:"cns", q:"What is the MOST frequently identified pathogen of bacterial meningitis in children beyond the neonatal period?", o:["Streptococcus pneumoniae","Neisseria meningitides","Haemophilus influenzae Type b","Staphylococcus aureus","Pseudomonas aeruginosa"], a:0},
+        {c:"cns", q:"Which of the following tests can differentiate between bacterial and viral meningitis?", o:["C-reactive protein","Erythrocyte sedimentation rate","Procalcitonin","Blood culture","WBC count"], a:3},
+        {c:"cns", q:"What is the recommended treatment duration for N. meningitidis meningitis?", o:["7 days","10 days","14 days","21 days","28 days"], a:0},
+        {c:"cns", q:"Steroids reduced hearing loss in children with meningitis due to", o:["Streptococcus pneumoniae","Neisseria meningitides","Haemophilus influenzae Type b","Staphylococcus aureus","Pseudomonas aeruginosa"], a:2}
+    ];
+
+    let currentCategory = "";
+    let selectedChapter = "";
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = []; 
+    let timerInterval;
+    let totalSeconds = 0;
+    let isSimulated = false;
+    let lastOrderType = ''; 
+
+    // Category mapping
+    const categoryMap = {
+        'growth': 'Growth & Nutrition 👶',
+        'breastfeeding': 'Breastfeeding 🍼',
+        'pem': 'Protein Energy Malnutrition 📉',
+        'vitamins': 'Vitamins & Micronutrients 💊',
+        'fevers': 'Fevers 🌡️',
+        'ent': 'ENT (Otitis) 👂',
+        'gastro': 'Gastroenteritis 🦠',
+        'resp': 'Respiratory 🫁',
+        'cns': 'CNS Infections 🧠',
+        'all': 'ALL COMBINED 🧩'
+    };
+
+    window.onload = function() {
+        const catContainer = document.getElementById('chapters-container');
+        const keys = Object.keys(categoryMap);
+        keys.forEach(k => {
+            const btn = document.createElement('button');
+            btn.className = k === 'all' ? 'btn-large btn-orange' : 'btn-large btn-blue';
+            btn.innerText = categoryMap[k];
+            btn.onclick = () => selectCategory(k);
+            catContainer.appendChild(btn);
+        });
+    };
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+
+        const footerQuote = document.getElementById('main-footer-quote');
+        if (screenId === 'screen-home') {
+            footerQuote.style.display = 'block';
+        } else {
+            footerQuote.style.display = 'none';
+        }
+    }
+
+    function goHome() {
+        clearInterval(timerInterval);
+        showScreen('screen-home');
+    }
+
+    function exitQuiz() {
+        clearInterval(timerInterval);
+        showScreen('screen-setup');
+    }
+
+    function selectCategory(cat) {
+        selectedChapter = cat;
+        showScreen('screen-setup');
+    }
+
+    function startTimer() {
+        totalSeconds = 0;
+        clearInterval(timerInterval);
+        document.getElementById('timer').innerHTML = `⏱️ 00:00`;
+        timerInterval = setInterval(() => {
+            totalSeconds++;
+            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerHTML = `⏱️ ${m}:${s}`;
+        }, 1000);
+    }
+
+    function startExam(orderType) {
+        lastOrderType = orderType; 
+
+        if (selectedChapter === 'all') {
+            currentQuestions = [...rawDB];
+        } else {
+            currentQuestions = rawDB.filter(q => q.c === selectedChapter);
+        }
+
+        if(orderType === 'random' || orderType === 'simulated') { 
+            shuffleArray(currentQuestions); 
+        }
+        
+        userAnswers = new Array(currentQuestions.length).fill(null);
+        showScreen('screen-quiz');
+        startTimer();
+
+        if(orderType === 'simulated') {
+            isSimulated = true;
+            document.getElementById('standard-quiz-ui').style.display = 'none';
+            document.getElementById('simulated-quiz-ui').style.display = 'block';
+            document.getElementById('question-tracker').style.display = 'none';
+            renderSimulatedExam();
+        } else {
+            isSimulated = false;
+            document.getElementById('simulated-quiz-ui').style.display = 'none';
+            document.getElementById('standard-quiz-ui').style.display = 'block';
+            document.getElementById('question-tracker').style.display = 'inline';
+            currentQuestionIndex = 0;
+            loadStandardQuestion();
+        }
+    }
+
+    function restartExam() {
+        startExam(lastOrderType);
+    }
+
+    // --- STANDARD MODE ---
+    function loadStandardQuestion() {
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('feedback-msg').style.display = 'none';
+        
+        if(currentQuestionIndex > 0) {
+            document.getElementById('prev-btn').style.display = 'block';
+        } else {
+            document.getElementById('prev-btn').style.display = 'none';
+        }
+        
+        const qData = currentQuestions[currentQuestionIndex];
+        document.getElementById('question-tracker').innerHTML = `Q ${currentQuestionIndex + 1}/${currentQuestions.length}`;
+        
+        const progressPercentage = ((currentQuestionIndex) / currentQuestions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercentage + "%";
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = ''; 
+
+        const previousAnswer = userAnswers[currentQuestionIndex];
+
+        qData.o.forEach((optText, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            
+            const letter = String.fromCharCode(65 + index);
+            btn.innerText = `${letter}) ${optText}`;
+            
+            if (previousAnswer !== null) {
+                btn.disabled = true;
+                if (index === qData.a) {
+                    btn.classList.add('correct');
+                } else if (index === previousAnswer) {
+                    btn.classList.add('wrong');
+                }
+            } else {
+                btn.onclick = () => checkStandardAnswer(index, btn, qData);
+            }
+            optionsContainer.appendChild(btn);
+        });
+
+        if (previousAnswer !== null) {
+            showFeedback('feedback-msg', previousAnswer === qData.a);
+            document.getElementById('next-btn').style.display = 'block';
+        }
+    }
+
+    function checkStandardAnswer(selectedIndex, btnClicked, qData) {
+        userAnswers[currentQuestionIndex] = selectedIndex; 
+        
+        const correctIndex = qData.a;
+        const allButtons = document.getElementById('options-container').querySelectorAll('.option-btn');
+        allButtons.forEach(btn => btn.disabled = true);
+        
+        if (selectedIndex === correctIndex) {
+            btnClicked.classList.add('correct');
+            showFeedback('feedback-msg', true);
+        } else {
+            btnClicked.classList.add('wrong');
+            allButtons[correctIndex].classList.add('correct');
+            showFeedback('feedback-msg', false);
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuestions.length) {
+            loadStandardQuestion();
+        } else {
+            endExam();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadStandardQuestion();
+        }
+    }
+
+    // --- SIMULATED MODE ---
+    function renderSimulatedExam() {
+        const simContainer = document.getElementById('simulated-quiz-ui');
+        simContainer.innerHTML = '';
+
+        document.getElementById('progress-bar').style.width = "0%";
+
+        currentQuestions.forEach((qData, qIndex) => {
+            const qBlock = document.createElement('div');
+            qBlock.className = 'sim-question-block';
+            
+            const qTitle = document.createElement('div');
+            qTitle.className = 'question-text';
+            qTitle.innerText = `Q ${qIndex + 1}/${currentQuestions.length}: ${qData.q}`;
+            qBlock.appendChild(qTitle);
+
+            const optsDiv = document.createElement('div');
+            optsDiv.className = 'options-container';
+
+            const fbDiv = document.createElement('div');
+            fbDiv.className = 'feedback-msg';
+            fbDiv.id = `fb-sim-${qIndex}`;
+
+            qData.o.forEach((optText, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                const letter = String.fromCharCode(65 + optIndex);
+                btn.innerText = `${letter}) ${optText}`;
+                btn.onclick = () => checkSimulatedAnswer(qIndex, optIndex, btn, qData, optsDiv, fbDiv);
+                optsDiv.appendChild(btn);
+            });
+
+            qBlock.appendChild(optsDiv);
+            qBlock.appendChild(fbDiv);
+            simContainer.appendChild(qBlock);
+        });
+
+        const finishBtn = document.createElement('button');
+        finishBtn.className = 'btn-large btn-orange';
+        finishBtn.innerHTML = '✅ Finish Exam';
+        finishBtn.onclick = endExam;
+        simContainer.appendChild(finishBtn);
+    }
+
+    function checkSimulatedAnswer(qIndex, optIndex, btnClicked, qData, optsDiv, fbDiv) {
+        if(userAnswers[qIndex] !== null) return; 
+        
+        userAnswers[qIndex] = optIndex; 
+        
+        const correctIndex = qData.a;
+        const allButtons = optsDiv.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => btn.disabled = true);
+        
+        if (optIndex === correctIndex) {
+            btnClicked.classList.add('correct');
+            showFeedback(fbDiv.id, true);
+        } else {
+            btnClicked.classList.add('wrong');
+            allButtons[correctIndex].classList.add('correct');
+            showFeedback(fbDiv.id, false);
+        }
+
+        const answeredCount = userAnswers.filter(ans => ans !== null).length;
+        document.getElementById('progress-bar').style.width = (answeredCount / currentQuestions.length) * 100 + "%";
+    }
+
+    // --- SHARED LOGIC ---
+    function showFeedback(divId, isCorrect) {
+        const feedbackDiv = document.getElementById(divId);
+        feedbackDiv.style.display = 'block';
+        
+        if (isCorrect) {
+            feedbackDiv.innerHTML = "✔️ Correct";
+            feedbackDiv.className = "feedback-msg msg-correct";
+        } else {
+            feedbackDiv.innerHTML = `❌ Wrong`;
+            feedbackDiv.className = "feedback-msg msg-wrong";
+        }
+    }
+
+    function endExam() {
+        clearInterval(timerInterval);
+        document.getElementById('progress-bar').style.width = "100%";
+        
+        let correctCount = 0;
+        let wrongCount = 0;
+        let wrongAnswersData = [];
+
+        userAnswers.forEach((ans, idx) => {
+            if (ans !== null && ans === currentQuestions[idx].a) {
+                correctCount++;
+            } else {
+                wrongCount++;
+                const correctStr = currentQuestions[idx].o[currentQuestions[idx].a];
+                const correctLetter = String.fromCharCode(65 + currentQuestions[idx].a);
+                
+                let userStr = "No Answer";
+                if(ans !== null) {
+                    const userLetter = String.fromCharCode(65 + ans);
+                    userStr = `${userLetter}) ${currentQuestions[idx].o[ans]}`;
+                }
+                
+                wrongAnswersData.push({
+                    qData: currentQuestions[idx],
+                    userAns: userStr,
+                    correctAns: `${correctLetter}) ${correctStr}`
+                });
+            }
+        });
+
+        window.currentWrongAnswers = wrongAnswersData;
+
+        setTimeout(() => {
+            showScreen('screen-result');
+            const percentage = Math.round((correctCount / currentQuestions.length) * 100) || 0;
+            document.getElementById('final-score').innerText = `${percentage}%`;
+            
+            const arabicMsgDiv = document.getElementById('custom-arabic-msg');
+            const btnAgain = document.getElementById('btn-again');
+
+            if (percentage === 100) {
+                arabicMsgDiv.innerText = "واو بجد تحفه اوي 🤯";
+                btnAgain.style.display = 'none'; 
+            } else if (percentage >= 50) {
+                arabicMsgDiv.innerText = "مبروووك يا بطل 💪 ممكن تعيد تاني!";
+                btnAgain.style.display = 'block'; 
+            } else {
+                arabicMsgDiv.innerText = "محتاج تجرب تاني يا معلم 🫶";
+                btnAgain.style.display = 'block'; 
+            }
+
+            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('final-time').innerHTML = `⏱️ Time Taken: ${m}:${s}`;
+
+            document.getElementById('stat-correct').innerHTML = `✔️ Correct: ${correctCount}`;
+            document.getElementById('stat-wrong').innerHTML = `❌ Wrong: ${wrongCount}`;
+            
+            if (wrongCount === 0) { 
+                document.getElementById('btn-review').style.display = 'none'; 
+            } else { 
+                document.getElementById('btn-review').style.display = 'block'; 
+            }
+        }, 300);
+    }
+
+    function showReview() {
+        showScreen('screen-review');
+        const reviewList = document.getElementById('review-list');
+        reviewList.innerHTML = '';
+
+        window.currentWrongAnswers.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'review-item';
+            div.innerHTML = `
+                <div class="review-q">Q: ${item.qData.q}</div>
+                <div class="review-wrong">❌ Yours: ${item.userAns}</div>
+                <div class="review-correct">✔️ Correct: ${item.correctAns}</div>
+            `;
+            reviewList.appendChild(div);
+        });
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+</script>
+
+</body>
+</html>
